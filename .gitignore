@@ -1,0 +1,27 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Database
+/app.db
+/app.db-shm
+/app.db-wal
+
+# Environment variables
+.env
+.env.local
+
+# Cache
+cache/
+!cache/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Runtime
+.publish/
