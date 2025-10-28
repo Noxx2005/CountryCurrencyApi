@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "dotnet CountryCurrencyApi.dll --urls http://0.0.0.0:$PORT"
+
+[env]
+DB_SERVER = "containers-us-west-101.railway.app"
+DB_NAME = "railway" 
+DB_USER = "root"
+DB_PASSWORD = "your-password-from-railway"
+DB_PORT = "3306"

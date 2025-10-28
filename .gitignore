@@ -5,6 +5,8 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
+.vs/
+
 
 # Database
 /app.db

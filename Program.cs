@@ -24,8 +24,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"Using connection string: {connectionString}");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//Console.WriteLine($"Using connection string: {connectionString}");
+
+var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
+var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "countries_db";
+var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "root";
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
+
+var connectionString = $"Server={dbServer};Database={dbName};Uid={dbUser};Pwd={dbPassword};Port={dbPort};";
+
+Console.WriteLine($"Connecting to database: {dbServer}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
