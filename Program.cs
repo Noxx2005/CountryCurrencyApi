@@ -11,39 +11,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // **SIMPLIFIED DATABASE SETUP - With Fallback**
-string connectionString;
+var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-// Try to get Railway MySQL variables first
-var mysqlHost = Environment.GetEnvironmentVariable("MYSQLHOST");
-var mysqlDatabase = Environment.GetEnvironmentVariable("MYSQLDATABASE");
-var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER");
-var mysqlPassword = Environment.GetEnvironmentVariable("MYSQLPASSWORD");
-var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT");
-
-if (!string.IsNullOrEmpty(mysqlHost))
+if (string.IsNullOrEmpty(connectionUrl))
 {
-    // Use Railway MySQL with SSL
-    connectionString = $"Server={mysqlHost};Database={mysqlDatabase};Uid={mysqlUser};Pwd={mysqlPassword};Port={mysqlPort};SslMode=None;";
-    Console.WriteLine($"🚀 Using Railway MySQL: {mysqlHost}");
-}
-else
-{
-    // Fallback: Use in-memory database to ensure app starts
-    connectionString = "Server=localhost;Database=temp;Uid=root;Pwd=;";
-    Console.WriteLine("⚠️ Using fallback connection - app will start but database won't work");
+    Console.WriteLine("⚠️ DATABASE_URL not found. Using fallback local connection.");
+    connectionUrl = "Server=127.0.0.1;Port=3306;Database=countries_db;Uid=root;Pwd=;SslMode=None;";
 }
 
-try
-{
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-    Console.WriteLine("✅ Database configured");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"❌ Database setup failed: {ex.Message}");
-    // Don't throw - let the app start without database
-}
+Console.WriteLine($"Using connection: {connectionUrl}");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionUrl, ServerVersion.AutoDetect(connectionUrl)));
 
 // Services with null checks
 builder.Services.AddScoped<ICountryService, CountryService>();
