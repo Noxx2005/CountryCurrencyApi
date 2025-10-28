@@ -23,7 +23,7 @@ var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT");
 if (!string.IsNullOrEmpty(mysqlHost))
 {
     // Use Railway MySQL with SSL
-    connectionString = $"Server={mysqlHost};Database={mysqlDatabase};Uid={mysqlUser};Pwd={mysqlPassword};Port={mysqlPort};SslMode=Required;";
+    connectionString = $"Server={mysqlHost};Database={mysqlDatabase};Uid={mysqlUser};Pwd={mysqlPassword};Port={mysqlPort};SslMode=None;";
     Console.WriteLine($"🚀 Using Railway MySQL: {mysqlHost}");
 }
 else
