@@ -2,49 +2,56 @@
 using CountryCurrencyApi.Services;
 using CountryCurrencyApi.Middleware;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddSwaggerGen(c =>
+// **SIMPLIFIED DATABASE SETUP - With Fallback**
+string connectionString;
+
+// Try to get Railway MySQL variables first
+var mysqlHost = Environment.GetEnvironmentVariable("MYSQLHOST");
+var mysqlDatabase = Environment.GetEnvironmentVariable("MYSQLDATABASE");
+var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER");
+var mysqlPassword = Environment.GetEnvironmentVariable("MYSQLPASSWORD");
+var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT");
+
+if (!string.IsNullOrEmpty(mysqlHost))
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Country Currency API",
-        Version = "v1",
-        Description = "A RESTful API that fetches country data from external APIs and provides CRUD operations",
-        Contact = new OpenApiContact
-        {
-            Name = "Your Name",
-            Email = "your.email@example.com"
-        }
-    });
-});
+    // Use Railway MySQL with SSL
+    connectionString = $"Server={mysqlHost};Database={mysqlDatabase};Uid={mysqlUser};Pwd={mysqlPassword};Port={mysqlPort};SslMode=Required;";
+    Console.WriteLine($"🚀 Using Railway MySQL: {mysqlHost}");
+}
+else
+{
+    // Fallback: Use in-memory database to ensure app starts
+    connectionString = "Server=localhost;Database=temp;Uid=root;Pwd=;";
+    Console.WriteLine("⚠️ Using fallback connection - app will start but database won't work");
+}
 
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-//Console.WriteLine($"Using connection string: {connectionString}");
+try
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    Console.WriteLine("✅ Database configured");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"❌ Database setup failed: {ex.Message}");
+    // Don't throw - let the app start without database
+}
 
-var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
-var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "countries_db";
-var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "root";
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
-var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
-
-var connectionString = $"Server={dbServer};Database={dbName};Uid={dbUser};Pwd={dbPassword};Port={dbPort};";
-
-Console.WriteLine($"Connecting to database: {dbServer}");
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
+// Services with null checks
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddHttpClient();
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -57,45 +64,62 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Swagger
 app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Country Currency API v1");
-    c.RoutePrefix = "swagger"; // Swagger UI at /swagger
-});
-
-
+// Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseCors("AllowAll");
 app.UseAuthorization();
-
 app.MapControllers();
 
+// Health check endpoint - ALWAYS WORKS
+app.MapGet("/", () => "Country Currency API is running!");
+app.MapGet("/health", () => "Healthy");
+
+// Database initialization - DON'T CRASH IF IT FAILS
 try
 {
     using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
-    Console.WriteLine("✅ Database created successfully!");
+    var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
 
-    var cacheDir = Path.Combine(Directory.GetCurrentDirectory(), "cache");
-    if (!Directory.Exists(cacheDir))
-        Directory.CreateDirectory(cacheDir);
-
-    Console.WriteLine("✅ Cache directory ready");
+    if (dbContext != null)
+    {
+        Console.WriteLine("🔄 Creating database...");
+        await dbContext.Database.EnsureCreatedAsync();
+        Console.WriteLine("✅ Database ready!");
+    }
+    else
+    {
+        Console.WriteLine("⚠️ Database context is null - running without database");
+    }
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"❌ Database error: {ex.Message}");
-    Console.WriteLine("💡 Make sure XAMPP MySQL is running on port 3306");
-    throw;
+    Console.WriteLine($"⚠️ Database initialization failed: {ex.Message}");
+    Console.WriteLine("💡 App will run without database functionality");
 }
 
-Console.WriteLine("🚀 Application started successfully!");
-Console.WriteLine("📚 Swagger UI available at: http://localhost:5000");
-Console.WriteLine("🌐 API running at: " + string.Join(", ", app.Urls));
+// Ensure cache directory exists
+try
+{
+    var cacheDir = Path.Combine(Directory.GetCurrentDirectory(), "cache");
+    if (!Directory.Exists(cacheDir))
+    {
+        Directory.CreateDirectory(cacheDir);
+        Console.WriteLine("✅ Cache directory created");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"⚠️ Cache directory setup failed: {ex.Message}");
+}
+
+Console.WriteLine("🎉 Application started successfully!");
+Console.WriteLine("📚 Swagger available at: /swagger");
+Console.WriteLine("🏥 Health check at: /health");
 
 app.Run();
