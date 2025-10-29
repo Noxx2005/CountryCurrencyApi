@@ -1,23 +1,17 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Step 1: Base image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-
-# Copy project files
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/out .
-
-# Create cache directory
-RUN mkdir -p /app/cache
-
-ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 EXPOSE 8080
 
+# Step 2: Build image
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet restore "./CountryCurrencyApi.csproj"
+RUN dotnet publish "./CountryCurrencyApi.csproj" -c Release -o /app/publish
+
+# Step 3: Final image
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "CountryCurrencyApi.dll"]
