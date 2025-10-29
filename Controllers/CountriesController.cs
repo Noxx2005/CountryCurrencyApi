@@ -22,13 +22,20 @@ namespace CountryCurrencyApi.Controllers
         {
             try
             {
+                _logger.LogInformation("🔄 Refresh countries endpoint called");
                 await _countryService.RefreshCountriesAsync();
+                _logger.LogInformation("✅ Countries refresh completed successfully");
                 return Ok(new { message = "Countries refreshed successfully" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error refreshing countries");
-                return StatusCode(503, new { error = "External data source unavailable", details = ex.Message });
+                _logger.LogError(ex, "💥 Error refreshing countries in controller");
+                return StatusCode(503, new
+                {
+                    error = "External data source unavailable",
+                    details = ex.Message,
+                    innerException = ex.InnerException?.Message
+                });
             }
         }
 
