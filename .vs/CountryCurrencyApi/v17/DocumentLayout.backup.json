@@ -3,16 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\.env||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:.env||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\controllers\\countriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:controllers\\countriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\railway.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:railway.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|c:\\users\\bot peter\\documents\\visual studio 2022\\countrycurrencyapi\\controllers\\countriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9ED03195-57AC-4E3D-8FB3-61ADDBA028AC}|CountryCurrencyApi.csproj|solutionrelative:controllers\\countriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +30,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 357,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-29T17:18:31.711Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
@@ -47,6 +68,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": ".env",
+              "DocumentMoniker": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\.env",
+              "RelativeDocumentMoniker": ".env",
+              "ToolTip": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\.env",
+              "RelativeToolTip": ".env",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-29T17:18:07.592Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "CountriesController.cs",
               "DocumentMoniker": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\Controllers\\CountriesController.cs",
               "RelativeDocumentMoniker": "Controllers\\CountriesController.cs",
@@ -59,26 +93,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "railway.json",
-              "DocumentMoniker": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\railway.json",
-              "RelativeDocumentMoniker": "railway.json",
-              "ToolTip": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\railway.json",
-              "RelativeToolTip": "railway.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAADAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "appsettings.Production.json",
+              "DocumentMoniker": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\appsettings.Production.json",
+              "RelativeDocumentMoniker": "appsettings.Production.json",
+              "ToolTip": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\appsettings.Production.json",
+              "RelativeToolTip": "appsettings.Production.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-10-29T16:22:45.164Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\Bot Peter\\Documents\\Visual Studio 2022\\CountryCurrencyApi\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAYwCMAAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAYwKQAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-28T07:35:45.87Z",
               "EditorCaption": ""
