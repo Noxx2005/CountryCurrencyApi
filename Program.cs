@@ -11,39 +11,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// **PXXL PORT CONFIGURATION**
+// PXXL typically uses port 8080 or provides a PORT env variable
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://*:{port}");
+
 // **CLOUDCLUSTERS DATABASE SETUP**
 string connectionString;
 
-// Option 1: Use environment variables (recommended for Railway)
+// Use environment variables (PXXL will set these)
 var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
 var dbName = Environment.GetEnvironmentVariable("DB_NAME");
 var dbUser = Environment.GetEnvironmentVariable("DB_USER");
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
 var dbPort = Environment.GetEnvironmentVariable("DB_PORT");
 
-// Option 2: Direct configuration for testing
-if (string.IsNullOrEmpty(dbHost))
+if (!string.IsNullOrEmpty(dbHost))
 {
-    Console.WriteLine("⚠️ Using direct CloudClusters configuration");
-
-    var mysqlBuilder = new MySqlConnectionStringBuilder
-    {
-        Server = "mysql-204042-0.cloudclusters.net", // Your host
-        Port = 10048, // Your port
-        Database = "countrycurrency_db", // Your database name
-        UserID = "Bot", // Your username
-        Password = "asd12345", // Your password
-        SslMode = MySqlSslMode.Required,
-        AllowPublicKeyRetrieval = true,
-        ConnectionTimeout = 30,
-        DefaultCommandTimeout = 30
-    };
-
-    connectionString = mysqlBuilder.ToString();
-}
-else
-{
-    // Use environment variables
+    // Use environment variables from PXXL
     var mysqlBuilder = new MySqlConnectionStringBuilder
     {
         Server = dbHost,
@@ -58,23 +43,20 @@ else
     };
 
     connectionString = mysqlBuilder.ToString();
-    Console.WriteLine("✅ Using CloudClusters MySQL with environment variables");
+    Console.WriteLine("✅ Using CloudClusters MySQL with PXXL environment variables");
+}
+else
+{
+    // Fallback for local development
+    Console.WriteLine("⚠️ Using local development database");
+    connectionString = "Server=localhost;Port=3306;Database=countries_db;Uid=root;Pwd=;SslMode=None;";
 }
 
-Console.WriteLine($"🔐 Using database: {connectionString.Replace("Password=asd12345", "Password=***").Replace("Pwd=asd12345", "Pwd=***")}");
+Console.WriteLine($"🔐 Database configured successfully");
 
 // Register DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),
-        mysqlOptions =>
-        {
-            mysqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null);
-        });
-});
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 // Your services
 builder.Services.AddScoped<ICountryService, CountryService>();
@@ -82,9 +64,20 @@ builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddHttpClient();
 
-// CORS
+// CORS - Configure for PXXL domain
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("PXXLPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "https://*.pxxl.app",
+                "https://your-app-name.pxxl.app"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
@@ -95,45 +88,49 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Swagger
-app.UseSwagger();
-app.UseSwaggerUI();
+// **PXXL SPECIFIC MIDDLEWARE**
+// Health check endpoint required by many hosting providers
+app.MapGet("/health", () => new
+{
+    status = "Healthy",
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+});
 
-// Middleware
+// Use CORS
+app.UseCors("AllowAll");
+
+// Swagger - only in development
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else
+{
+    // In production, you might want to protect Swagger or disable it
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Country Currency API v1");
+        options.RoutePrefix = "api-docs"; // Access via /api-docs instead of root
+    });
+}
+
+// Your existing middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
-app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
 
-// Health check
-app.MapGet("/", () => "Country Currency API with CloudClusters MySQL");
-app.MapGet("/health", async (AppDbContext? dbContext) =>
+// Root endpoint
+app.MapGet("/", () => new
 {
-    try
-    {
-        if (dbContext != null)
-        {
-            var canConnect = await dbContext.Database.CanConnectAsync();
-            return Results.Json(new
-            {
-                status = canConnect ? "Healthy" : "Degraded",
-                database = canConnect ? "CloudClusters Connected" : "Disconnected",
-                timestamp = DateTime.UtcNow
-            });
-        }
-        return Results.Json(new { status = "No Database Context", timestamp = DateTime.UtcNow });
-    }
-    catch (Exception ex)
-    {
-        return Results.Json(new
-        {
-            status = "Unhealthy",
-            error = ex.Message,
-            timestamp = DateTime.UtcNow
-        }, statusCode: 503);
-    }
+    message = "Country Currency API is running on PXXL!",
+    version = "1.0.0",
+    database = "CloudClusters MySQL",
+    timestamp = DateTime.UtcNow
 });
 
 // Database initialization
@@ -144,34 +141,25 @@ try
 
     if (dbContext != null)
     {
-        Console.WriteLine("🔄 Testing CloudClusters database connection...");
-
-        // Test basic connection first
+        Console.WriteLine("🔄 Testing database connection on PXXL...");
         var canConnect = await dbContext.Database.CanConnectAsync();
 
         if (canConnect)
         {
-            Console.WriteLine("✅ CloudClusters database connection successful!");
-
-            // Create tables if they don't exist
+            Console.WriteLine("✅ Database connection successful on PXXL!");
             await dbContext.Database.EnsureCreatedAsync();
             Console.WriteLine("✅ Database tables ready!");
-
-            // Test a simple query
-            var count = await dbContext.Countries.CountAsync();
-            Console.WriteLine($"📊 Current countries in database: {count}");
         }
         else
         {
-            Console.WriteLine("❌ CloudClusters database connection failed");
+            Console.WriteLine("❌ Database connection failed on PXXL");
         }
     }
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"💥 Database initialization error: {ex.Message}");
-    Console.WriteLine($"🔍 Stack trace: {ex.StackTrace}");
+    Console.WriteLine($"💥 Database setup failed on PXXL: {ex.Message}");
 }
 
-Console.WriteLine("🎉 Application started with CloudClusters MySQL!");
+Console.WriteLine($"🚀 Application starting on port {port}");
 app.Run();

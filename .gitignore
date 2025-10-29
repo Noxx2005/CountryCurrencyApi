@@ -6,6 +6,8 @@ obj/
 *.userosscache
 *.sln.docstates
 .vs/
+.env
+
 
 
 # Database
